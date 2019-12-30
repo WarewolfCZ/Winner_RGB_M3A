@@ -1,0 +1,19 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP BS83A04A
+D Touch I/O Flash MCU, 16k Flash, 96B RAM, 4 touch keys, SOP-8
+K holtek touch mcu
+$ENDCMP
+#
+$CMP SG8F080P
+D 8-BIT MCU With Touch Sensor, 7kB OTP ROM, 144B RAM, TSSOP-24
+K Holtek SG8F080P 8-bit touch sensor microcontroller TSSOP-24
+F https://www.dropbox.com/s/jz27jhk09z7hem6/SG8F080P-spec-v1.1%28EASY%29.pdf?dl=0
+$ENDCMP
+#
+$CMP TouchSensorPad
+D Pad for MCU with embedded touch sensor
+K touch sensor pad
+$ENDCMP
+#
+#End Doc Library

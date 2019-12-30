@@ -1,0 +1,285 @@
+EESchema Schematic File Version 4
+LIBS:Winner_RGB_M3A-cache
+EELAYER 29 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 3 6
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L ACT4060A:ACT4060A U4
+U 1 1 5E1783C5
+P 7150 4350
+F 0 "U4" H 7000 5165 50  0000 C CNN
+F 1 "ACT4060A" H 7000 5074 50  0000 C CNN
+F 2 "Package_SO:SOP-8_3.76x4.96mm_P1.27mm" H 7000 4300 50  0001 C CNN
+F 3 "" H 7150 4350 50  0001 C CNN
+	1    7150 4350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C2
+U 1 1 5E1799E6
+P 5900 3500
+F 0 "C2" H 6015 3546 50  0000 L CNN
+F 1 "?" H 6015 3455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric" H 6015 3409 50  0001 L CNN
+F 3 "~" H 5900 3500 50  0001 C CNN
+	1    5900 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C1
+U 1 1 5E179F56
+P 5450 4700
+F 0 "C1" H 5565 4746 50  0000 L CNN
+F 1 "?" H 5565 4655 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 5565 4609 50  0001 L CNN
+F 3 "~" H 5450 4700 50  0001 C CNN
+	1    5450 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C3
+U 1 1 5E17A406
+P 6050 3850
+F 0 "C3" H 6165 3896 50  0000 L CNN
+F 1 "?" H 6165 3805 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 6165 3759 50  0001 L CNN
+F 3 "~" H 6050 3850 50  0001 C CNN
+	1    6050 3850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C4
+U 1 1 5E17A9D9
+P 6800 4900
+F 0 "C4" V 6548 4900 50  0000 C CNN
+F 1 "?" V 6639 4900 50  0000 C CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" V 6640 4900 50  0001 C CNN
+F 3 "~" H 6800 4900 50  0001 C CNN
+	1    6800 4900
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R13
+U 1 1 5E178D72
+P 7200 3300
+F 0 "R13" V 6993 3300 50  0000 C CNN
+F 1 "100k" V 7084 3300 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 7270 3209 50  0001 L CNN
+F 3 "~" H 7200 3300 50  0001 C CNN
+	1    7200 3300
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R12
+U 1 1 5E179348
+P 6250 4900
+F 0 "R12" V 6043 4900 50  0000 C CNN
+F 1 "7.5k" V 6134 4900 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 6320 4809 50  0001 L CNN
+F 3 "~" H 6250 4900 50  0001 C CNN
+	1    6250 4900
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R11
+U 1 1 5E17957B
+P 6050 4300
+F 0 "R11" H 5980 4254 50  0000 R CNN
+F 1 "3.48k" H 5980 4345 50  0000 R CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 6120 4209 50  0001 L CNN
+F 3 "~" H 6050 4300 50  0001 C CNN
+	1    6050 4300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:L_Core_Ferrite L1
+U 1 1 5E17CBD6
+P 5650 4000
+F 0 "L1" H 5500 4050 50  0000 L CNN
+F 1 "15uH" H 5400 3950 50  0000 L CNN
+F 2 "Inductor_SMD:L_Wuerth_HCI-5040" H 5650 4000 50  0001 C CNN
+F 3 "~" H 5650 4000 50  0001 C CNN
+	1    5650 4000
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6050 3650 6350 3650
+Wire Wire Line
+	6350 3650 6350 3800
+Wire Wire Line
+	6350 3800 6550 3800
+Wire Wire Line
+	6450 3200 6450 3300
+Wire Wire Line
+	6450 3900 6550 3900
+$Comp
+L power:GNDPWR #PWR0101
+U 1 1 5E185A5C
+P 5900 5100
+F 0 "#PWR0101" H 5900 4900 50  0001 C CNN
+F 1 "GNDPWR" H 5904 4946 50  0000 C CNN
+F 2 "" H 5900 5050 50  0001 C CNN
+F 3 "" H 5900 5050 50  0001 C CNN
+	1    5900 5100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6050 3700 6050 3650
+Wire Wire Line
+	5900 4100 6050 4100
+$Comp
+L Device:R R10
+U 1 1 5E1797CB
+P 5700 4500
+F 0 "R10" V 5493 4500 50  0000 C CNN
+F 1 "10.5k" V 5584 4500 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" H 5770 4409 50  0001 L CNN
+F 3 "~" H 5700 4500 50  0001 C CNN
+	1    5700 4500
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7500 4500 7500 4100
+Wire Wire Line
+	7500 4100 7450 4100
+Wire Wire Line
+	5850 4000 6050 4000
+Connection ~ 6050 4000
+Wire Wire Line
+	5450 4000 5450 4500
+Wire Wire Line
+	6050 4000 6550 4000
+Wire Wire Line
+	5450 4500 5550 4500
+Wire Wire Line
+	5850 4500 6050 4500
+Wire Wire Line
+	6050 4150 6050 4100
+Connection ~ 6050 4100
+Wire Wire Line
+	6050 4100 6550 4100
+Wire Wire Line
+	6050 4450 6050 4500
+Connection ~ 6050 4500
+Wire Wire Line
+	6050 4500 7500 4500
+Wire Wire Line
+	5900 4100 5900 4900
+Text HLabel 4200 4000 0    50   Input ~ 0
+5V
+Wire Wire Line
+	5450 4000 4200 4000
+Connection ~ 6450 3300
+Wire Wire Line
+	6450 3300 6450 3900
+Wire Wire Line
+	7350 3300 7700 3300
+Wire Wire Line
+	7700 3300 7700 3900
+Wire Wire Line
+	7700 3900 7450 3900
+Wire Wire Line
+	6450 3300 6950 3300
+Connection ~ 5900 4900
+Wire Wire Line
+	5900 4900 5900 5100
+Wire Wire Line
+	5900 3650 5900 4100
+Connection ~ 5900 4100
+Wire Wire Line
+	6950 4900 7700 4900
+Wire Wire Line
+	7700 4900 7700 4000
+Wire Wire Line
+	7700 4000 7450 4000
+Wire Wire Line
+	6100 4900 5900 4900
+Wire Wire Line
+	6400 4900 6650 4900
+Wire Wire Line
+	5450 4850 5450 4900
+Wire Wire Line
+	5450 4900 5900 4900
+Wire Wire Line
+	5450 4550 5450 4500
+Connection ~ 5450 4500
+$Comp
+L Device:D_Schottky D1
+U 1 1 5E1A1589
+P 4850 4650
+F 0 "D1" V 4804 4729 50  0000 L CNN
+F 1 "D_Schottky" V 4895 4729 50  0000 L CNN
+F 2 "Diode_SMD:D_2010_5025Metric" H 4850 4650 50  0001 C CNN
+F 3 "~" H 4850 4650 50  0001 C CNN
+	1    4850 4650
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4850 4800 4850 4900
+Wire Wire Line
+	4850 4900 5450 4900
+Connection ~ 5450 4900
+Wire Wire Line
+	4850 4500 4850 3700
+Wire Wire Line
+	4850 3700 5850 3700
+Wire Wire Line
+	5850 3700 5850 4000
+Connection ~ 5850 4000
+Wire Wire Line
+	5850 4000 5800 4000
+Wire Wire Line
+	5500 4000 5450 4000
+Connection ~ 5450 4000
+$Comp
+L Device:D D5
+U 1 1 5E1A6B78
+P 6450 3050
+F 0 "D5" V 6450 2971 50  0000 R CNN
+F 1 "D" V 6405 2971 50  0001 R CNN
+F 2 "Diode_SMD:D_2010_5025Metric" H 6450 3050 50  0001 C CNN
+F 3 "~" H 6450 3050 50  0001 C CNN
+	1    6450 3050
+	0    -1   -1   0   
+$EndComp
+Text HLabel 4150 3650 0    50   Input ~ 0
+Vin
+Wire Wire Line
+	6450 2700 6450 2900
+Wire Wire Line
+	4150 3650 4400 3650
+Wire Wire Line
+	4400 3650 4400 2700
+Wire Wire Line
+	4400 2700 5900 2700
+Text HLabel 6850 2450 0    50   Input ~ 0
+12V
+Wire Wire Line
+	6850 2450 6950 2450
+Wire Wire Line
+	6950 2450 6950 3300
+Connection ~ 6950 3300
+Wire Wire Line
+	6950 3300 7050 3300
+Text HLabel 4200 4900 0    50   Input ~ 0
+GND
+Wire Wire Line
+	4200 4900 4850 4900
+Connection ~ 4850 4900
+Wire Wire Line
+	5900 2700 5900 3350
+Connection ~ 5900 2700
+Wire Wire Line
+	5900 2700 6450 2700
+$EndSCHEMATC

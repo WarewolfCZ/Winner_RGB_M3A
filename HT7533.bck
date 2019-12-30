@@ -1,0 +1,15 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP HT7533
+D LDO low dropout regulator 100mA 3.3V
+K LDO low dropout linear regulator
+F http://www.tme.eu/fr/Document/ced3461ed31ea70a3c416fb648e0cde7/APE8865-3.pdf
+$ENDCMP
+#
+$CMP HT7533ss
+D LDO low dropout regulator 100mA 3.3V
+K LDO low dropout linear regulator
+F https://www.alldatasheet.com/datasheet-pdf/pdf/64477/HOLTEK/HT7533.html
+$ENDCMP
+#
+#End Doc Library

@@ -1,0 +1,336 @@
+EESchema Schematic File Version 4
+LIBS:Winner_RGB_M3A-cache
+EELAYER 29 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 6 6
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Device:D_Schottky D61
+U 1 1 5E216A85
+P 5400 3450
+F 0 "D61" H 5400 3666 50  0000 C CNN
+F 1 "SS14" H 5400 3575 50  0000 C CNN
+F 2 "Diode_SMD:D_SMA" H 5400 3450 50  0001 C CNN
+F 3 "https://www.digikey.com/product-detail/en/on-semiconductor/SS14/SS14CT-ND/965729" H 5400 3450 50  0001 C CNN
+	1    5400 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:L_Core_Ferrite L61
+U 1 1 5E217502
+P 7150 2850
+F 0 "L61" H 7238 2896 50  0000 L CNN
+F 1 "100uH" H 7238 2805 50  0000 L CNN
+F 2 "Inductor_SMD:L_7.3x7.3_H4.5" H 7150 2850 50  0001 C CNN
+F 3 "~" H 7150 2850 50  0001 C CNN
+	1    7150 2850
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R61
+U 1 1 5E2188D0
+P 6250 2100
+F 0 "R61" V 6150 2050 50  0000 L CNN
+F 1 "0.240R" V 6350 2050 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 6180 2100 50  0001 C CNN
+F 3 "~" H 6250 2100 50  0001 C CNN
+	1    6250 2100
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C61
+U 1 1 5E21946F
+P 6900 2400
+F 0 "C61" H 7015 2446 50  0000 L CNN
+F 1 "C" H 7015 2355 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 6938 2250 50  0001 C CNN
+F 3 "~" H 6900 2400 50  0001 C CNN
+	1    6900 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C62
+U 1 1 5E219C1D
+P 5000 2500
+F 0 "C62" H 5115 2546 50  0000 L CNN
+F 1 "C" H 5115 2455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 5038 2350 50  0001 C CNN
+F 3 "~" H 5000 2500 50  0001 C CNN
+	1    5000 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C63
+U 1 1 5E21A25F
+P 4600 2500
+F 0 "C63" H 4715 2546 50  0000 L CNN
+F 1 "C" H 4715 2455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 4638 2350 50  0001 C CNN
+F 3 "~" H 4600 2500 50  0001 C CNN
+	1    4600 2500
+	1    0    0    -1  
+$EndComp
+Text HLabel 3500 2650 0    50   Input ~ 0
+12V
+Text HLabel 3450 3450 0    50   Input ~ 0
+TOUCH_COLD
+Text HLabel 6600 3900 0    50   Input ~ 0
+WARM_VCC
+Text HLabel 7250 3900 0    50   Input ~ 0
+WARM_GND
+Text HLabel 6500 1500 0    50   Input ~ 0
+COLD_VCC
+Text HLabel 7150 1500 0    50   Input ~ 0
+COLD_GND
+Text HLabel 3350 5250 0    50   Input ~ 0
+TOUCH_WARM
+$Comp
+L Driver_LED:IS31LT3360 U7
+U 1 1 5E044346
+P 6250 2850
+F 0 "U7" H 6275 3317 50  0000 C CNN
+F 1 "R3224 3360" H 6275 3226 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:TSOT-23-5" H 6300 2600 50  0001 L CIN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/3465fa.pdf" H 6300 2350 50  0001 C CNN
+	1    6250 2850
+	1    0    0    -1  
+$EndComp
+Text HLabel 3450 2350 0    50   Input ~ 0
+GND
+Wire Wire Line
+	3450 3450 3700 3450
+Wire Wire Line
+	3700 3450 3700 2850
+Wire Wire Line
+	3700 2850 5900 2850
+Wire Wire Line
+	5900 2650 5750 2650
+Wire Wire Line
+	6650 2850 6650 3450
+Wire Wire Line
+	6100 2100 5750 2100
+Wire Wire Line
+	5750 2100 5750 2650
+Connection ~ 5750 2650
+Wire Wire Line
+	5750 2650 5000 2650
+Wire Wire Line
+	6400 2100 6600 2100
+Wire Wire Line
+	6750 2100 6750 2650
+Wire Wire Line
+	6750 2650 6650 2650
+Wire Wire Line
+	6500 1500 6600 1500
+Wire Wire Line
+	6600 1500 6600 2100
+Connection ~ 6600 2100
+Wire Wire Line
+	6600 2100 6750 2100
+Wire Wire Line
+	7150 1500 7550 1500
+Wire Wire Line
+	7550 1500 7550 2850
+Wire Wire Line
+	7550 2850 7300 2850
+Connection ~ 6650 2850
+Connection ~ 4600 2350
+Wire Wire Line
+	4600 2350 3450 2350
+Connection ~ 4600 2650
+Wire Wire Line
+	4600 2650 4400 2650
+Wire Wire Line
+	3500 2650 4400 2650
+Connection ~ 4400 2650
+Connection ~ 5000 2350
+Wire Wire Line
+	5000 2350 4600 2350
+Connection ~ 5000 2650
+Wire Wire Line
+	5000 2650 4600 2650
+Wire Wire Line
+	5400 3050 5400 2350
+Wire Wire Line
+	5400 2350 5000 2350
+Wire Wire Line
+	5400 3050 6250 3050
+Wire Wire Line
+	4400 3450 5250 3450
+Wire Wire Line
+	5550 3450 6650 3450
+Connection ~ 6750 2100
+Wire Wire Line
+	6900 2100 6900 2250
+Wire Wire Line
+	6650 2850 6900 2850
+Wire Wire Line
+	6750 2100 6900 2100
+Wire Wire Line
+	6900 2550 6900 2850
+Connection ~ 6900 2850
+Wire Wire Line
+	6900 2850 7000 2850
+$Comp
+L Device:D_Schottky D71
+U 1 1 5E061557
+P 5400 5850
+F 0 "D71" H 5400 6066 50  0000 C CNN
+F 1 "SS14" H 5400 5975 50  0000 C CNN
+F 2 "Diode_SMD:D_SMA" H 5400 5850 50  0001 C CNN
+F 3 "https://www.digikey.com/product-detail/en/on-semiconductor/SS14/SS14CT-ND/965729" H 5400 5850 50  0001 C CNN
+	1    5400 5850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:L_Core_Ferrite L72
+U 1 1 5E06155D
+P 7150 5250
+F 0 "L72" H 7238 5296 50  0000 L CNN
+F 1 "100uH" H 7238 5205 50  0000 L CNN
+F 2 "Inductor_SMD:L_7.3x7.3_H4.5" H 7150 5250 50  0001 C CNN
+F 3 "~" H 7150 5250 50  0001 C CNN
+	1    7150 5250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R71
+U 1 1 5E061563
+P 6250 4500
+F 0 "R71" V 6150 4450 50  0000 L CNN
+F 1 "0.3R" V 6350 4450 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 6180 4500 50  0001 C CNN
+F 3 "~" H 6250 4500 50  0001 C CNN
+	1    6250 4500
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C71
+U 1 1 5E061569
+P 6900 4800
+F 0 "C71" H 7015 4846 50  0000 L CNN
+F 1 "C" H 7015 4755 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 6938 4650 50  0001 C CNN
+F 3 "~" H 6900 4800 50  0001 C CNN
+	1    6900 4800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C72
+U 1 1 5E06156F
+P 5000 4900
+F 0 "C72" H 5115 4946 50  0000 L CNN
+F 1 "C" H 5115 4855 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 5038 4750 50  0001 C CNN
+F 3 "~" H 5000 4900 50  0001 C CNN
+	1    5000 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C73
+U 1 1 5E061575
+P 4600 4900
+F 0 "C73" H 4715 4946 50  0000 L CNN
+F 1 "C" H 4715 4855 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 4638 4750 50  0001 C CNN
+F 3 "~" H 4600 4900 50  0001 C CNN
+	1    4600 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Driver_LED:IS31LT3360 U8
+U 1 1 5E06157B
+P 6250 5250
+F 0 "U8" H 6275 5717 50  0000 C CNN
+F 1 "R3224 3360" H 6275 5626 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:TSOT-23-5" H 6300 5000 50  0001 L CIN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/3465fa.pdf" H 6300 4750 50  0001 C CNN
+	1    6250 5250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5900 5050 5750 5050
+Wire Wire Line
+	6650 5250 6650 5850
+Wire Wire Line
+	6100 4500 5750 4500
+Wire Wire Line
+	5750 4500 5750 5050
+Connection ~ 5750 5050
+Wire Wire Line
+	5750 5050 5000 5050
+Wire Wire Line
+	6400 4500 6600 4500
+Wire Wire Line
+	6750 4500 6750 5050
+Wire Wire Line
+	6750 5050 6650 5050
+Wire Wire Line
+	6600 3900 6600 4500
+Connection ~ 6600 4500
+Wire Wire Line
+	6600 4500 6750 4500
+Wire Wire Line
+	7550 3900 7550 5250
+Wire Wire Line
+	7550 5250 7300 5250
+Connection ~ 6650 5250
+Connection ~ 4600 5050
+Wire Wire Line
+	4600 5050 4400 5050
+Wire Wire Line
+	4400 5050 4400 5850
+Connection ~ 4400 5050
+Connection ~ 5000 4750
+Wire Wire Line
+	5000 4750 4600 4750
+Connection ~ 5000 5050
+Wire Wire Line
+	5000 5050 4600 5050
+Wire Wire Line
+	5400 5450 5400 4750
+Wire Wire Line
+	5400 4750 5000 4750
+Wire Wire Line
+	5400 5450 6250 5450
+Wire Wire Line
+	4400 5850 5250 5850
+Wire Wire Line
+	5550 5850 6650 5850
+Connection ~ 6750 4500
+Wire Wire Line
+	6900 4500 6900 4650
+Wire Wire Line
+	6650 5250 6900 5250
+Wire Wire Line
+	6750 4500 6900 4500
+Wire Wire Line
+	6900 4950 6900 5250
+Connection ~ 6900 5250
+Wire Wire Line
+	6900 5250 7000 5250
+Wire Wire Line
+	7550 3900 7250 3900
+Wire Wire Line
+	3350 5250 5900 5250
+Wire Wire Line
+	5400 3050 5000 3050
+Wire Wire Line
+	5000 3050 5000 4750
+Connection ~ 5400 3050
+Wire Wire Line
+	4400 2650 4400 3450
+Connection ~ 4400 3450
+Wire Wire Line
+	4400 3450 4400 5050
+$EndSCHEMATC

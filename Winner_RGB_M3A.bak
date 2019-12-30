@@ -1,0 +1,260 @@
+EESchema Schematic File Version 4
+LIBS:Winner_RGB_M3A-cache
+EELAYER 29 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 6
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Sheet
+S 8300 2900 1250 800 
+U 5E0FEC58
+F0 "NIGHT_LIGHT_LED_STRIP" 50
+F1 "nightLightLedStrip.sch" 50
+F2 "LED_RED" I L 8300 3050 50 
+F3 "LED_GREEN" I L 8300 3250 50 
+F4 "LED_BLUE" I L 8300 3450 50 
+F5 "5V" I R 9550 3050 50 
+$EndSheet
+$Sheet
+S 4600 2950 700  700 
+U 5E1679DB
+F0 "STEP_DOWN" 50
+F1 "stepdown.sch" 50
+F2 "5V" I L 4600 3450 50 
+F3 "Vin" I L 4600 3100 50 
+F4 "12V" I R 5300 3250 50 
+F5 "GND" I R 5300 3450 50 
+$EndSheet
+$Sheet
+S 2700 2750 1000 1100
+U 5E1C8C80
+F0 "MAIN_TOUCH" 50
+F1 "mainTouch.sch" 50
+F2 "5V" I R 3700 3250 50 
+F3 "TOUCH_WARM" I L 2700 3300 50 
+F4 "TOUCH_COLD" I L 2700 3550 50 
+$EndSheet
+$Sheet
+S 6050 2800 1700 900 
+U 5E1C9306
+F0 "NIGHT_LIGHT_TOUCH" 50
+F1 "nighLightTouch.sch" 50
+F2 "12V" I L 6050 3250 50 
+F3 "LED_RED" I R 7750 3050 50 
+F4 "LED_GREEN" I R 7750 3250 50 
+F5 "LED_BLUE" I R 7750 3450 50 
+F6 "GND" I L 6050 3450 50 
+$EndSheet
+Wire Wire Line
+	7750 3050 8300 3050
+Wire Wire Line
+	8300 3250 7750 3250
+Wire Wire Line
+	7750 3450 8300 3450
+Wire Wire Line
+	5300 3250 5700 3250
+Wire Wire Line
+	3700 3250 4200 3250
+Wire Wire Line
+	4200 3250 4200 3450
+Wire Wire Line
+	4200 3450 4600 3450
+$Sheet
+S 3850 4250 1450 900 
+U 5E216608
+F0 "LED_DRIVER" 50
+F1 "ledDriver.sch" 50
+F2 "12V" I R 5300 4700 50 
+F3 "WARM_VCC" I L 3850 4900 50 
+F4 "WARM_GND" I L 3850 5050 50 
+F5 "COLD_VCC" I R 5300 4900 50 
+F6 "COLD_GND" I R 5300 5050 50 
+F7 "TOUCH_WARM" I L 3850 4400 50 
+F8 "TOUCH_COLD" I L 3850 4550 50 
+F9 "GND" I R 5300 4550 50 
+$EndSheet
+Wire Wire Line
+	5300 4700 5700 4700
+Wire Wire Line
+	5700 4700 5700 3250
+Connection ~ 5700 3250
+Wire Wire Line
+	5700 3250 6050 3250
+Wire Wire Line
+	2700 3550 2250 3550
+Wire Wire Line
+	2250 3550 2250 4550
+Wire Wire Line
+	2250 4550 3850 4550
+Wire Wire Line
+	3850 4400 2100 4400
+Wire Wire Line
+	2100 4400 2100 3300
+Wire Wire Line
+	2100 3300 2700 3300
+$Comp
+L Device:L L4
+U 1 1 5E02600A
+P 5650 3450
+F 0 "L4" V 5600 3450 50  0000 C CNN
+F 1 "L" V 5749 3450 50  0000 C CNN
+F 2 "Inductor_THT:L_Axial_L14.0mm_D4.5mm_P15.24mm_Horizontal_Fastron_LACC" H 5650 3450 50  0001 C CNN
+F 3 "~" H 5650 3450 50  0001 C CNN
+F 4 "Ferrite bead" V 5650 3450 50  0001 C CNN "Note"
+	1    5650 3450
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5800 3450 6050 3450
+Wire Wire Line
+	5500 3450 5450 3450
+$Comp
+L Mechanical:MountingHole_Pad H1
+U 1 1 5E02DE0A
+P 2550 5950
+F 0 "H1" H 2450 5907 50  0000 R CNN
+F 1 "WARM_VCC" H 2850 6150 50  0000 R CNN
+F 2 "Connector_Pin:Pin_D1.0mm_L10.0mm" H 2550 5950 50  0001 C CNN
+F 3 "~" H 2550 5950 50  0001 C CNN
+	1    2550 5950
+	-1   0    0    1   
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H2
+U 1 1 5E02EF0B
+P 2900 5950
+F 0 "H2" H 2800 5907 50  0000 R CNN
+F 1 "WARM_GND" H 3000 6150 50  0000 R CNN
+F 2 "Connector_Pin:Pin_D1.0mm_L10.0mm" H 2900 5950 50  0001 C CNN
+F 3 "~" H 2900 5950 50  0001 C CNN
+	1    2900 5950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3850 4900 2550 4900
+Wire Wire Line
+	2550 4900 2550 5850
+Wire Wire Line
+	3850 5050 2900 5050
+Wire Wire Line
+	2900 5050 2900 5850
+$Comp
+L Mechanical:MountingHole_Pad H3
+U 1 1 5E0308DD
+P 5500 5950
+F 0 "H3" H 5400 5907 50  0000 R CNN
+F 1 "COLD_GND" H 5800 6150 50  0000 R CNN
+F 2 "Connector_Pin:Pin_D1.0mm_L10.0mm" H 5500 5950 50  0001 C CNN
+F 3 "~" H 5500 5950 50  0001 C CNN
+	1    5500 5950
+	-1   0    0    1   
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H4
+U 1 1 5E0308E3
+P 5850 5950
+F 0 "H4" H 5750 5907 50  0000 R CNN
+F 1 "COLD_VCC" H 5950 6150 50  0000 R CNN
+F 2 "Connector_Pin:Pin_D1.0mm_L10.0mm" H 5850 5950 50  0001 C CNN
+F 3 "~" H 5850 5950 50  0001 C CNN
+	1    5850 5950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5300 5050 5500 5050
+Wire Wire Line
+	5500 5050 5500 5850
+Wire Wire Line
+	5300 4900 5850 4900
+Wire Wire Line
+	5850 4900 5850 5850
+Wire Wire Line
+	9550 3050 9850 3050
+Wire Wire Line
+	9850 3050 9850 2350
+Wire Wire Line
+	9850 2350 5950 2350
+Wire Wire Line
+	4200 2350 4200 3250
+Connection ~ 4200 3250
+$Comp
+L Mechanical:MountingHole_Pad H5
+U 1 1 5E0377BD
+P 4400 1500
+F 0 "H5" H 4300 1457 50  0000 R CNN
+F 1 "VCC" H 4450 1700 50  0000 R CNN
+F 2 "Connector_Pin:Pin_D1.0mm_L10.0mm" H 4400 1500 50  0001 C CNN
+F 3 "~" H 4400 1500 50  0001 C CNN
+	1    4400 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4400 1600 4400 3100
+Wire Wire Line
+	4400 3100 4600 3100
+Wire Wire Line
+	5450 1600 5450 2150
+Connection ~ 5450 3450
+Wire Wire Line
+	5450 3450 5300 3450
+Connection ~ 5450 2150
+Wire Wire Line
+	5450 2150 5450 3450
+Wire Wire Line
+	5950 2050 5950 2350
+Connection ~ 5950 2350
+Wire Wire Line
+	5950 2350 4200 2350
+Text Notes 2000 4200 0    50   ~ 0
+PWM signals
+Wire Wire Line
+	5300 4550 5450 4550
+Wire Wire Line
+	5450 4550 5450 3450
+$Comp
+L Mechanical:MountingHole_Pad H6
+U 1 1 5E037D5C
+P 5450 1500
+F 0 "H6" H 5350 1457 50  0000 R CNN
+F 1 "GND" H 5500 1700 50  0000 R CNN
+F 2 "Connector_Pin:Pin_D1.0mm_L10.0mm" H 5450 1500 50  0001 C CNN
+F 3 "~" H 5450 1500 50  0001 C CNN
+	1    5450 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6450 2050 6450 2150
+Wire Wire Line
+	6450 2150 5450 2150
+$Comp
+L Mechanical:MountingHole_Pad H7
+U 1 1 5E03CC00
+P 5950 1950
+F 0 "H7" H 5850 1907 50  0000 R CNN
+F 1 "CLOCK_VCC" H 6000 2150 50  0000 R CNN
+F 2 "Connector_Pin:Pin_D1.0mm_L10.0mm" H 5950 1950 50  0001 C CNN
+F 3 "~" H 5950 1950 50  0001 C CNN
+	1    5950 1950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H8
+U 1 1 5E03B471
+P 6450 1950
+F 0 "H8" H 6350 1907 50  0000 R CNN
+F 1 "CLOCK_GND" H 6500 2150 50  0000 R CNN
+F 2 "Connector_Pin:Pin_D1.0mm_L10.0mm" H 6450 1950 50  0001 C CNN
+F 3 "~" H 6450 1950 50  0001 C CNN
+	1    6450 1950
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC

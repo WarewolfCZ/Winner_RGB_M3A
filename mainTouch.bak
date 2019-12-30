@@ -1,0 +1,298 @@
+EESchema Schematic File Version 4
+LIBS:Winner_RGB_M3A-cache
+EELAYER 29 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 4 6
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Device:R R15
+U 1 1 5E1EC281
+P 5850 3700
+F 0 "R15" H 5920 3746 50  0000 L CNN
+F 1 "1k" H 5920 3655 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 5780 3700 50  0001 C CNN
+F 3 "~" H 5850 3700 50  0001 C CNN
+	1    5850 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R16
+U 1 1 5E1ECE59
+P 6150 3700
+F 0 "R16" H 6220 3746 50  0000 L CNN
+F 1 "1k" H 6220 3655 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 6080 3700 50  0001 C CNN
+F 3 "~" H 6150 3700 50  0001 C CNN
+	1    6150 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R14
+U 1 1 5E1ED2BE
+P 5800 1800
+F 0 "R14" H 5870 1846 50  0000 L CNN
+F 1 "10R" H 5870 1755 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 5730 1800 50  0001 C CNN
+F 3 "~" H 5800 1800 50  0001 C CNN
+	1    5800 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C8
+U 1 1 5E1ED846
+P 6400 1800
+F 0 "C8" H 6515 1846 50  0000 L CNN
+F 1 "?" H 6515 1755 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 6438 1650 50  0001 C CNN
+F 3 "~" H 6400 1800 50  0001 C CNN
+	1    6400 1800
+	1    0    0    -1  
+$EndComp
+Text HLabel 5300 1600 0    50   Input ~ 0
+5V
+Wire Wire Line
+	5300 1600 5800 1600
+Wire Wire Line
+	5800 1600 5800 1650
+Wire Wire Line
+	5800 1600 6400 1600
+Wire Wire Line
+	6400 1600 6400 1650
+Connection ~ 5800 1600
+$Comp
+L MCU_Holtek:TouchSensorPad PAD1
+U 1 1 5E1EEEF0
+P 3850 4950
+F 0 "PAD1" H 4028 5054 50  0000 L CNN
+F 1 "TouchSensorPad" H 4028 4963 50  0000 L CNN
+F 2 "Pads:Pad_D8.0mm" H 3900 4750 50  0001 C CNN
+F 3 "" H 3850 4950 50  0001 C CNN
+	1    3850 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L MCU_Holtek:TouchSensorPad PAD2
+U 1 1 5E1EF4B7
+P 4900 4950
+F 0 "PAD2" H 5078 5054 50  0000 L CNN
+F 1 "TouchSensorPad" H 5078 4963 50  0000 L CNN
+F 2 "Pads:Pad_D8.0mm" H 4950 4750 50  0001 C CNN
+F 3 "" H 4900 4950 50  0001 C CNN
+	1    4900 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L MCU_Holtek:TouchSensorPad PAD3
+U 1 1 5E1EF8EC
+P 5950 4950
+F 0 "PAD3" H 6128 5054 50  0000 L CNN
+F 1 "TouchSensorPad" H 6128 4963 50  0000 L CNN
+F 2 "Pads:Pad_D8.0mm" H 6000 4750 50  0001 C CNN
+F 3 "" H 5950 4950 50  0001 C CNN
+	1    5950 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L MCU_Holtek:TouchSensorPad PAD4
+U 1 1 5E1EFD8B
+P 7100 4950
+F 0 "PAD4" H 7278 5054 50  0000 L CNN
+F 1 "TouchSensorPad" H 7278 4963 50  0000 L CNN
+F 2 "Pads:Pad_D8.0mm" H 7150 4750 50  0001 C CNN
+F 3 "" H 7100 4950 50  0001 C CNN
+	1    7100 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L MCU_Holtek:BS83A04A U3
+U 1 1 5E1F114E
+P 5100 3150
+F 0 "U3" H 5050 3965 50  0000 C CNN
+F 1 "BS83A04A" H 5050 3874 50  0000 C CNN
+F 2 "Package_SO:SOP-8_3.76x4.96mm_P1.27mm" H 5150 3100 50  0001 C CNN
+F 3 "" H 5100 3150 50  0001 C CNN
+	1    5100 3150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5800 1950 5800 2600
+Wire Wire Line
+	5800 2600 5750 2600
+Wire Wire Line
+	5750 2700 6400 2700
+Wire Wire Line
+	6400 2700 6400 1950
+$Comp
+L power:GNDPWR #PWR0102
+U 1 1 5E1F3061
+P 8450 4700
+F 0 "#PWR0102" H 8450 4500 50  0001 C CNN
+F 1 "GNDPWR" H 8454 4546 50  0000 C CNN
+F 2 "" H 8450 4650 50  0001 C CNN
+F 3 "" H 8450 4650 50  0001 C CNN
+	1    8450 4700
+	1    0    0    -1  
+$EndComp
+Connection ~ 6400 2700
+Wire Wire Line
+	5750 2800 6150 2800
+Wire Wire Line
+	5750 2900 5850 2900
+Wire Wire Line
+	5850 2900 5850 3450
+Wire Wire Line
+	5850 3850 5850 4000
+Wire Wire Line
+	6150 4000 6150 3850
+Wire Wire Line
+	4350 2600 3850 2600
+Wire Wire Line
+	3950 2700 3950 4400
+Wire Wire Line
+	3950 4400 4900 4400
+Wire Wire Line
+	3950 2700 4350 2700
+Wire Wire Line
+	4350 2800 4050 2800
+Wire Wire Line
+	4050 2800 4050 4300
+Wire Wire Line
+	4050 4300 5950 4300
+Wire Wire Line
+	4350 2900 4150 2900
+Wire Wire Line
+	4150 2900 4150 4200
+Wire Wire Line
+	4150 4200 7100 4200
+$Comp
+L Device:C C9
+U 1 1 5E1FA4C1
+P 7250 4600
+F 0 "C9" V 7150 4750 50  0000 C CNN
+F 1 "C" V 7089 4600 50  0000 C CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 7288 4450 50  0001 C CNN
+F 3 "~" H 7250 4600 50  0001 C CNN
+	1    7250 4600
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C7
+U 1 1 5E1FAC47
+P 6100 4600
+F 0 "C7" V 6000 4750 50  0000 C CNN
+F 1 "C" V 5939 4600 50  0000 C CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 6138 4450 50  0001 C CNN
+F 3 "~" H 6100 4600 50  0001 C CNN
+	1    6100 4600
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C6
+U 1 1 5E1FB0BB
+P 5050 4600
+F 0 "C6" V 4950 4750 50  0000 C CNN
+F 1 "C" V 4889 4600 50  0000 C CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 5088 4450 50  0001 C CNN
+F 3 "~" H 5050 4600 50  0001 C CNN
+	1    5050 4600
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C5
+U 1 1 5E1FB3D6
+P 4000 4600
+F 0 "C5" V 3900 4750 50  0000 C CNN
+F 1 "C" V 3839 4600 50  0000 C CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 4038 4450 50  0001 C CNN
+F 3 "~" H 4000 4600 50  0001 C CNN
+	1    4000 4600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5850 4000 6150 4000
+Wire Wire Line
+	3850 2600 3850 4600
+Connection ~ 5950 4600
+Wire Wire Line
+	5950 4600 5950 4700
+Connection ~ 4900 4600
+Wire Wire Line
+	4900 4600 4900 4700
+Connection ~ 7100 4600
+Wire Wire Line
+	7100 4600 7100 4700
+Wire Wire Line
+	4900 4400 4900 4600
+Wire Wire Line
+	5950 4300 5950 4600
+Wire Wire Line
+	7100 4200 7100 4600
+Connection ~ 3850 4600
+Wire Wire Line
+	3850 4600 3850 4700
+Wire Wire Line
+	4150 4600 4700 4600
+Wire Wire Line
+	4700 4600 4700 5400
+Wire Wire Line
+	4700 5400 5750 5400
+Wire Wire Line
+	5750 5400 5750 4600
+Wire Wire Line
+	5750 4600 5200 4600
+Wire Wire Line
+	5750 5400 6900 5400
+Wire Wire Line
+	6900 5400 6900 4600
+Wire Wire Line
+	6900 4600 6250 4600
+Connection ~ 5750 5400
+Wire Wire Line
+	6900 5400 8050 5400
+Wire Wire Line
+	8050 5400 8050 4600
+Wire Wire Line
+	8050 4600 7400 4600
+Connection ~ 6900 5400
+Wire Wire Line
+	8050 4600 8050 4000
+Wire Wire Line
+	8050 4000 6400 4000
+Connection ~ 8050 4600
+Connection ~ 6150 4000
+Wire Wire Line
+	8050 4600 8450 4600
+Wire Wire Line
+	8450 4600 8450 4700
+Wire Wire Line
+	6400 2700 6400 4000
+Connection ~ 6400 4000
+Wire Wire Line
+	6400 4000 6150 4000
+Text HLabel 6900 3250 2    50   Input ~ 0
+TOUCH_WARM
+Text HLabel 6900 3450 2    50   Input ~ 0
+TOUCH_COLD
+Wire Wire Line
+	6900 3250 6150 3250
+Wire Wire Line
+	6150 2800 6150 3250
+Connection ~ 6150 3250
+Wire Wire Line
+	6150 3250 6150 3550
+Wire Wire Line
+	6900 3450 5850 3450
+Connection ~ 5850 3450
+Wire Wire Line
+	5850 3450 5850 3550
+$EndSCHEMATC

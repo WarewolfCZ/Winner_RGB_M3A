@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name MCU_Holtek)(type Legacy)(uri ${KIPRJMOD}/MCU_Holtek.lib)(options "")(descr ""))
+  (lib (name HT7533)(type Legacy)(uri ${KIPRJMOD}/HT7533.lib)(options "")(descr ""))
+  (lib (name ACT4060A)(type Legacy)(uri ${KIPRJMOD}/ACT4060A.lib)(options "")(descr ""))
+)
