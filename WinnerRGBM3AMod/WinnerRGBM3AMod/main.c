@@ -5,8 +5,12 @@
  * Author : WarewolfCZ
  */ 
 
+#define VERSION "1.0.0"
+
+#define DEBUG_ENABLED 1
+
 #define F_CPU 8000000UL // 8 MHz
-#define BAUD 19200       // define baud
+#define BAUD 19200       // define speed
 #define BAUDRATE ((F_CPU)/(BAUD*16UL)-1) // set baud rate value for UBRR
 #define DEFAULT_LED_TIMER_THRESHOLD 40
 #define EEPROM_SETTINGS_ADDRESS 0x00
@@ -33,23 +37,23 @@
 #define LEVEL_4 4
 #define LEVEL_5 5
 
-#define SETTINGS_INPUT_COLD ((uint8_t)(settings >> 8))
-#define SETTINGS_INPUT_WARM ((uint8_t)(settings & 0xFF))
+#define SETTINGS_COLD ((uint8_t)(settings >> 8))
+#define SETTINGS_WARM ((uint8_t)(settings & 0xFF))
 
-#define POWER_DIFFERS ((inputs[INPUT_COLD] == LEVEL_0 && inputs[INPUT_WARM] == LEVEL_0 && (SETTINGS_INPUT_COLD != LEVEL_0 || SETTINGS_INPUT_WARM != LEVEL_0)) || ((inputs[INPUT_COLD] != LEVEL_0 || inputs[INPUT_WARM] != LEVEL_0) && SETTINGS_INPUT_COLD == LEVEL_0 && SETTINGS_INPUT_WARM == LEVEL_0))
+#define POWER_DIFFERS ((inputs[INPUT_COLD] == LEVEL_0 && inputs[INPUT_WARM] == LEVEL_0 && (SETTINGS_COLD != LEVEL_0 || SETTINGS_WARM != LEVEL_0)) || ((inputs[INPUT_COLD] != LEVEL_0 || inputs[INPUT_WARM] != LEVEL_0) && SETTINGS_COLD == LEVEL_0 && SETTINGS_WARM == LEVEL_0))
 #define MODE_DIFFERS (\
- (inputs[INPUT_COLD] == LEVEL_0 && SETTINGS_INPUT_COLD != LEVEL_0) ||\
- (inputs[INPUT_WARM] == LEVEL_0 && SETTINGS_INPUT_WARM != LEVEL_0) ||\
- (inputs[INPUT_COLD] != LEVEL_0 && SETTINGS_INPUT_COLD == LEVEL_0) ||\
- (inputs[INPUT_WARM] != LEVEL_0 && SETTINGS_INPUT_WARM == LEVEL_0)\
+ (inputs[INPUT_COLD] == LEVEL_0 && SETTINGS_COLD != LEVEL_0) ||\
+ (inputs[INPUT_WARM] == LEVEL_0 && SETTINGS_WARM != LEVEL_0) ||\
+ (inputs[INPUT_COLD] != LEVEL_0 && SETTINGS_COLD == LEVEL_0) ||\
+ (inputs[INPUT_WARM] != LEVEL_0 && SETTINGS_WARM == LEVEL_0)\
 )
-#define BRIGHTNESS_DIFFERS (inputs[INPUT_COLD] != SETTINGS_INPUT_COLD || inputs[INPUT_WARM] != SETTINGS_INPUT_WARM)
+#define BRIGHTNESS_DIFFERS (inputs[INPUT_COLD] != SETTINGS_COLD || inputs[INPUT_WARM] != SETTINGS_WARM)
 
-#define COLD_BRIGHTNESS_LOWER (inputs[INPUT_COLD] < SETTINGS_INPUT_COLD)
-#define WARM_BRIGHTNESS_LOWER (inputs[INPUT_WARM] < SETTINGS_INPUT_WARM)
+#define COLD_BRIGHTNESS_LOWER (inputs[INPUT_COLD] < SETTINGS_COLD)
+#define WARM_BRIGHTNESS_LOWER (inputs[INPUT_WARM] < SETTINGS_WARM)
 
-#define COLD_BRIGHTNESS_HIGHER (inputs[INPUT_COLD] > SETTINGS_INPUT_COLD)
-#define WARM_BRIGHTNESS_HIGHER (inputs[INPUT_WARM] > SETTINGS_INPUT_WARM)
+#define COLD_BRIGHTNESS_HIGHER (inputs[INPUT_COLD] > SETTINGS_COLD)
+#define WARM_BRIGHTNESS_HIGHER (inputs[INPUT_WARM] > SETTINGS_WARM)
 
 #define BRIGHTNESS_LOWER COLD_BRIGHTNESS_LOWER || WARM_BRIGHTNESS_LOWER
 #define BRIGHTNESS_HIGHER COLD_BRIGHTNESS_HIGHER || WARM_BRIGHTNESS_HIGHER
@@ -67,20 +71,13 @@
 #include <stdbool.h>
 #include <avr/eeprom.h>
 
-uint16_t settings;
+uint16_t settings, pin;
 uint8_t selectedInput = 0;
 uint16_t analogInputs[ANALOG_INPUTS_COUNT];
 uint8_t inputs[ANALOG_INPUTS_COUNT];
 uint8_t bufferIndex = 0;
-uint8_t bufferLimit = 150;
+uint8_t bufferLimit = 50;
 char *uartBuffer;
-char lastChar = 0;
-
-void soft_reset() {
-	// enable watchdog and let it reset the controller
-	wdt_enable(WDTO_15MS);
-	for(;;){}
-}
 
 // function to initialize UART
 void uart_init (void) {
@@ -92,6 +89,9 @@ void uart_init (void) {
 	DDRD |= 1 << PIND1;//pin1 of portD as OUTPUT
 	DDRD &= ~(1 << PIND0);//pin0 of portD as INPUT
 	PORTD |= 1 << PIND0; // turn on the pull-up
+
+    uartBuffer = malloc(bufferLimit * sizeof(char) + 1);
+    memset(uartBuffer, 0, sizeof(uartBuffer[0])*bufferLimit); // clear buffer
 }
 
 // function to send data
@@ -115,20 +115,27 @@ void uart_str_transmit(char* str) {
 	}
 }
 
+char* flushBuffer() {
+    uartBuffer[bufferIndex] = 0x00;
+    bufferIndex = 0;
+    return uartBuffer;
+}
+
 char* uart_str_receive() {
     if (bufferIndex == 0) {
-	    uartBuffer = malloc(bufferLimit * sizeof(char) + 1);
-        lastChar = 0;
+        memset(uartBuffer, 0, sizeof(uartBuffer[0])*bufferLimit); // clear buffer
     }
-	if (bufferIndex < bufferLimit && lastChar != '\n' && lastChar != '\r') {
-		lastChar = uart_receive();
-		uartBuffer[bufferIndex] = lastChar;
-        bufferIndex++;
+	if (bufferIndex < bufferLimit) {
+		unsigned char receivedChar = uart_receive();
+        if (receivedChar == '\n' || receivedChar == '\r') {
+            return flushBuffer();
+        } else {
+		    uartBuffer[bufferIndex] = receivedChar;
+            bufferIndex++;
+            //uart_transmit(receivedChar);
+        }
 	} else {
-        uartBuffer[bufferIndex] = 0x00;
-        lastChar = 0;
-        bufferIndex = 0;
-        return uartBuffer;
+        return flushBuffer();
     }
 	return NULL;
 }
@@ -136,6 +143,13 @@ char* uart_str_receive() {
 void wdt_init(void) {
 	MCUSR = 0;
 	wdt_disable(); //disable watchdog
+}
+
+void soft_reset() {
+    if (DEBUG_ENABLED) uart_str_transmit("Soft reset\r\n");
+    // enable watchdog and let it reset the controller
+    wdt_enable(WDTO_15MS);
+    for(;;){}
 }
 
 void adc_init() {
@@ -157,7 +171,7 @@ void output_init() {
 }
 
 void touchPower() {
-    uart_str_transmit("power button touch\r\n");
+    if (DEBUG_ENABLED) uart_str_transmit("power button touch\r\n");
     PORTB |= (1 << PINB3);
     _delay_ms(200);
     PORTB &= ~(1 << PINB3);
@@ -165,7 +179,7 @@ void touchPower() {
 }
 
 void touchMode() {
-    uart_str_transmit("mode button touch\r\n");
+    if (DEBUG_ENABLED) uart_str_transmit("mode button touch\r\n");
     PORTB |= (1 << PINB2);
     _delay_ms(TOUCH_DELAY);
     PORTB &= ~(1 << PINB2);
@@ -173,7 +187,7 @@ void touchMode() {
 }
 
 void touchIncrease() {
-    uart_str_transmit("increase button touch\r\n");
+    if (DEBUG_ENABLED) uart_str_transmit("increase button touch\r\n");
     PORTB |= (1 << PINB1);
     _delay_ms(TOUCH_DELAY);
     PORTB &= ~(1 << PINB1);
@@ -181,24 +195,35 @@ void touchIncrease() {
 }
 
 void touchDecrease() {
-    uart_str_transmit("decrease button touch\r\n");
+    if (DEBUG_ENABLED) uart_str_transmit("decrease button touch\r\n");
     PORTB |= (1 << PINB0); // set PB0 to HIGH
     _delay_ms(TOUCH_DELAY);
     PORTB &= ~(1 << PINB0); // set PB0 to LOW
     _delay_ms(TOUCH_DELAY);
 }
 
+void validateSettings() {
+    if (settings == 0xFFFF || SETTINGS_COLD > LEVEL_5 || SETTINGS_WARM > LEVEL_5 || 
+    (SETTINGS_COLD != 0 && SETTINGS_WARM != 0 && SETTINGS_COLD != SETTINGS_WARM)) {
+        uart_str_transmit("Clearing invalid settings\r\n");
+        settings = 0;
+    }
+}
+
 void updateSettings(uint16_t settings) {
     uint16_t oldValue = eeprom_read_word(EEPROM_SETTINGS_ADDRESS);
+    validateSettings();
     eeprom_update_word(EEPROM_SETTINGS_ADDRESS, settings);
     if (settings != oldValue) {
-        uart_str_transmit("Settings written to EEPROM\r\n");
+        char msg[50];
+        if (DEBUG_ENABLED) sprintf(msg,"Settings written to EEPROM: 0x%04X\r\n", settings);
+        uart_str_transmit(msg);
     }
 }
 
 uint16_t readSettings() {
     settings = eeprom_read_word(EEPROM_SETTINGS_ADDRESS);
-    if (settings == 0xFFFF || SETTINGS_INPUT_COLD > LEVEL_5 || SETTINGS_INPUT_WARM > LEVEL_5) {
+    if (settings == 0xFFFF || SETTINGS_COLD > LEVEL_5 || SETTINGS_WARM > LEVEL_5) {
         uart_str_transmit("Initializing EEPROM\r\n");
         settings = 0;
         updateSettings(settings);
@@ -228,7 +253,6 @@ void readInputs() {
         ADCSRA |= (1 << ADSC);  // start conversion
         while (ADCSRA & (1<<ADSC)); //wait for conversion to finish
         uint16_t value = 0;
-        //PORTB |= (1 << PINB3); // LED on
         value = ADCL;
         value |= (ADCH << 8);
         analogInputs[selectedInput] = value;
@@ -239,40 +263,64 @@ void readInputs() {
 }
 
 void sendStatus() {
-    char string[256];
-    memset(string, 0, sizeof(string[0])*256); // clear string
-    sprintf(string,"0:%d,\t1:%d,\t2:%d,\t3:%d,\t4:%d,\t5:%d\tc:%u\tw:%u\tpwrdiff:%u\tsett: 0x%04X\r\n", analogInputs[0], analogInputs[1], analogInputs[2], analogInputs[3], analogInputs[4], analogInputs[5], inputs[INPUT_COLD], inputs[INPUT_WARM], POWER_DIFFERS, settings);
-    uart_str_transmit(string);
+    char msg[5];
+    uart_str_transmit("STATUS:");
+    itoa(analogInputs[0], msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+    itoa(analogInputs[1], msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+    itoa(analogInputs[2], msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+    itoa(analogInputs[3], msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+    itoa(analogInputs[4], msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+    itoa(analogInputs[5], msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+
+    itoa(inputs[INPUT_COLD], msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+    itoa(inputs[INPUT_WARM], msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+
+    itoa(SETTINGS_COLD, msg, 10);
+    uart_transmit(*msg);
+    uart_transmit(',');
+    itoa(SETTINGS_WARM, msg, 10);
+    uart_transmit(*msg);
+
+    uart_str_transmit("\r\n");
+
+    if (DEBUG_ENABLED) {
+        char msg3[120];
+        sprintf(msg3,"Buffer status: index: %d, limit: %d, buffer: %s\r\n", bufferIndex, bufferLimit, uartBuffer);
+        uart_str_transmit(msg3);
+    }
 }
 
 void sendLoadedSettings() {
-    char string[256];
-    memset(string, 0, sizeof(string[0])*256); // clear string
-    sprintf(string,"Settings loaded from EEPROM: 0x%04X\r\n", settings);
-    uart_str_transmit(string);
+    char msg[50];
+    sprintf(msg,"Settings loaded from EEPROM: 0x%04X\r\n", settings);
+    uart_str_transmit(msg);
 }
 
-int main(void) {
-	wdt_init(); // disable watchdog
-    output_init();
-    adc_init();
-	//sei();    // turn on interrupts
-	uart_init();
-
-    char string[256];
-    memset(string, 0, sizeof(string[0])*256); // clear string
-    uint8_t counter = 0;
-    ADCSRA |= (1 << ADSC);  // start ADC conversion
-    readSettings();
-    uart_str_transmit("Lamp mod starting\r\n");
-    sendLoadedSettings();
+void setup() {
 
     readInputs();
-
+    uint8_t counter = 0;
     _delay_ms(500);
+    validateSettings();
     while (POWER_DIFFERS) {
-        uart_str_transmit("Power status differs\r\n");
-        sendStatus();
+        if (DEBUG_ENABLED) uart_str_transmit("Power status differs\r\n");
+        if (DEBUG_ENABLED) sendStatus();
         touchPower();
         readInputs();
         counter++;
@@ -281,8 +329,8 @@ int main(void) {
     counter = 0;
     _delay_ms(50);
     while (MODE_DIFFERS) {
-        uart_str_transmit("Mode differs\r\n");
-        sendStatus();
+        if (DEBUG_ENABLED) uart_str_transmit("Mode differs\r\n");
+        if (DEBUG_ENABLED) sendStatus();
         touchMode();
         readInputs();
         counter++;
@@ -291,12 +339,12 @@ int main(void) {
     _delay_ms(50);
     counter = 0;
     while (BRIGHTNESS_DIFFERS) {
-        uart_str_transmit("Brightness differs\r\n");
-        sendStatus();
+        if (DEBUG_ENABLED) uart_str_transmit("Brightness differs\r\n");
+        if (DEBUG_ENABLED) sendStatus();
         counter = 0;
         while (BRIGHTNESS_LOWER) {
             touchIncrease();
-            sendStatus();
+            if (DEBUG_ENABLED) sendStatus();
             readInputs();
             counter++;
             if (counter > 10) soft_reset();
@@ -304,37 +352,90 @@ int main(void) {
         counter = 0;
         while (BRIGHTNESS_HIGHER) {
             touchDecrease();
-            sendStatus();
+            if (DEBUG_ENABLED) sendStatus();
             readInputs();
             counter++;
             if (counter > 10) soft_reset();
         }
     }
-    uart_str_transmit("Lamp mod setup complete\r\n");
+}
+
+
+int main(void) {
+	wdt_init(); // disable watchdog
+    output_init();
+    adc_init();
+	//sei();    // turn on interrupts
+	uart_init();
+
+    uint32_t counter = 0;
+    ADCSRA |= (1 << ADSC);  // start ADC conversion
+    readSettings();
+    uart_str_transmit("\r\n======= Winner RGB M3A Lamp mod v");
+    uart_str_transmit(VERSION);
+    uart_str_transmit(" by WarewolfCZ =======\n\r\n");
+
+    uart_str_transmit("Supported commands:\r\n");
+    uart_str_transmit("CMD:XY = set light levels, X = cold Y = warm, X and Y in interval <0,5>\r\n");
+    uart_str_transmit("PIN:1234 = set Bluetooth PIN\r\n");
+    uart_str_transmit("STATUS = request status line\r\n");
+    uart_str_transmit("Commands are separated by new line\r\n\r\n");
+
+    if (DEBUG_ENABLED) sendLoadedSettings();
+    _delay_ms(50);
+    setup();
+    uart_str_transmit("Setup complete\r\n");
 
 	while (1) { 
-        _delay_ms(1);
+        //_delay_ms(1);
         if (UCSRA & (1<<RXC)) {
             char* data = uart_str_receive();
-            if (data != NULL) {
-                uart_str_transmit("Received: ");
-                uart_str_transmit(data);
-                uart_str_transmit("\n");
+            if (data != NULL && data[0] != 0x00) {
+                if (DEBUG_ENABLED)  {
+                    uart_str_transmit("RECEIVED:");
+                    uart_str_transmit(data);
+                    uart_str_transmit("\r\n");
+                }
+
+                if (strncasecmp(data, "SET:", 4) == 0 && strlen(data) >= 6) {
+                    uint8_t cold = ((data[4] - '0') % (LEVEL_5 + 1));
+                    uint8_t warm = ((data[5] - '0') % (LEVEL_5 + 1));
+                    if (cold != warm && cold != 0 && warm != 0) { // invalid combination, set both to same value
+                        uart_str_transmit("SET_INVALID:");
+                    } else {
+                        settings = cold << 8 | warm;
+                        uart_str_transmit("SET_OK:");
+                    }
+                    uart_transmit((unsigned char) cold + '0');
+                    uart_transmit((unsigned char) warm + '0');
+                    uart_str_transmit("\r\n");
+                    setup();
+                } else if (strncasecmp(data, "PIN:", 4) == 0 && strlen(data) >= 8) {
+                    pin = ((data[4] - '0') % 10) << 8 | ((data[5] - '0') % 10);
+                    uart_str_transmit("PIN_OK:");
+                    uart_transmit((unsigned char) (pin >> 8) + '0');
+                    uart_transmit((unsigned char) ((pin & 0xFF) + '0'));
+                    uart_str_transmit("\r\n");
+                    setup();
+                } else if (strncasecmp(data, "STATUS", 6) == 0 && strlen(data) >= 6) {
+                     sendStatus();
+                } else {
+                    uart_str_transmit("CMD_INVALID\r\n");
+                }
             }
         }
         readInputs();
         counter++;
-        counter = counter % 250;
+        counter = counter % 25000;
         
         if (MODE_DIFFERS || BRIGHTNESS_DIFFERS) {    
-            sendStatus();
             settings = (((uint16_t) inputs[INPUT_COLD]) << 8) | inputs[INPUT_WARM];
-        }
-
-        if (counter == 0) {
-            sendStatus();
             updateSettings(settings);
-           // PORTB &= ~(1 << PINB3); // LED off
+        }
+        
+        if (counter == 0) {
+            if (DEBUG_ENABLED) sendStatus();
+            updateSettings(settings);
         }
 	}
 }
