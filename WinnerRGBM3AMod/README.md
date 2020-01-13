@@ -9,16 +9,16 @@ Serial port communication is configured to 19200 baud/s, 8 data bits, even parit
 
 ## Protocol
 
-Mod board can be controlled via serial connection/bluetooth. Commands are separated by new line character <CR> or <LF>
+Mod board can be controlled via serial connection/bluetooth. Commands are separated by new line character &lt;CR&gt; or &lt;LF&gt;
 
 ### SET
 
-Set lamp state - turn on/off, dim, change light temperature. If cold_level > 0 and warm_level > 0, the cold_level has to be equal to warm_level. 
+Set lamp state - turn on/off, dim, change light temperature. If cold_level &gt; 0 and warm_level &gt; 0, the cold_level has to be equal to warm_level. 
 
-  SET<COLD_LEVEL><WARM_LEVEL>
+  SET&lt;COLD_LEVEL&gt;&lt;WARM_LEVEL&gt;
 
-<COLD_LEVEL> = number 0 to 5
-<WARM_LEVEL> = number 0 to 5
+&lt;COLD_LEVEL&gt; = number 0 to 5
+&lt;WARM_LEVEL&gt; = number 0 to 5
   
 
 Example:
@@ -34,9 +34,9 @@ Response:
 
 Set bluetooth pin
 
-  PIN<pin_code>
+  PIN&lt;pin_code&gt;
 
-<pin_code> = 4 digit code
+&lt;pin_code&gt; = 4 digit code
 
 Example:
 
@@ -57,14 +57,14 @@ Example:
 
 Response:
 
-  STATUS:<INPUT1>,<INPUT2>,<COLD_LEVEL>,<WARM_LEVEL>,<EEPROM_COLD_LEVEL>,<EEPROM_WARM_LEVEL>
+  STATUS:&lt;INPUT1&gt;,&lt;INPUT2&gt;,&lt;COLD_LEVEL&gt;,&lt;WARM_LEVEL&gt;,&lt;EEPROM_COLD_LEVEL&gt;,&lt;EEPROM_WARM_LEVEL&gt;
 
-<INPUT1> = value from A/D converter
-<INPUT2> = value from A/D converter
-<COLD_LEVEL> = number 0 to 5
-<WARM_LEVEL> = number 0 to 5
-<EEPROM_COLD_LEVEL> = number 0 to 5
-<EEPROM_WARM_LEVEL> = number 0 to 5
+&lt;INPUT1&gt; = value from A/D converter
+&lt;INPUT2&gt; = value from A/D converter
+&lt;COLD_LEVEL&gt; = number 0 to 5
+&lt;WARM_LEVEL&gt; = number 0 to 5
+&lt;EEPROM_COLD_LEVEL&gt; = number 0 to 5
+&lt;EEPROM_WARM_LEVEL&gt; = number 0 to 5
   
 Response example:
 
