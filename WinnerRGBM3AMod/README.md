@@ -1,5 +1,7 @@
 # Winner_RGB_M3A MOD
 
+This mod board reads lamp status and stores it in EEPROM. When the power is turned off and back on, it is restored to stored state.
+
 ## Serial port 
 
 Serial port communication is configured to 19200 baud/s, 8 data bits, even parity
@@ -13,7 +15,7 @@ Mod board can be controlled via serial connection/bluetooth. Commands are separa
 
 Set lamp state - turn on/off, dim, change light temperature. If cold_level > 0 and warm_level > 0, the cold_level has to be equal to warm_level. 
 
-  SET:<COLD_LEVEL><WARM_LEVEL>
+  SET<COLD_LEVEL><WARM_LEVEL>
 
 <COLD_LEVEL> = number 0 to 5
 <WARM_LEVEL> = number 0 to 5
@@ -21,7 +23,7 @@ Set lamp state - turn on/off, dim, change light temperature. If cold_level > 0 a
 
 Example:
 
-  SET:11
+  SET11
 
 Response:
 
@@ -32,13 +34,13 @@ Response:
 
 Set bluetooth pin
 
-  PIN:<pin_code>
+  PIN<pin_code>
 
 <pin_code> = 4 digit code
 
 Example:
 
-  PIN:0000
+  PIN0000
   
 Response:
 
@@ -55,11 +57,27 @@ Example:
 
 Response:
 
-  STATUS:<COLD_LEVEL><WARM_LEVEL>
+  STATUS:<INPUT1>,<INPUT2>,<COLD_LEVEL>,<WARM_LEVEL>,<EEPROM_COLD_LEVEL>,<EEPROM_WARM_LEVEL>
 
+<INPUT1> = value from A/D converter
+<INPUT2> = value from A/D converter
 <COLD_LEVEL> = number 0 to 5
 <WARM_LEVEL> = number 0 to 5
+<EEPROM_COLD_LEVEL> = number 0 to 5
+<EEPROM_WARM_LEVEL> = number 0 to 5
   
 Response example:
 
-  STATUS:44
+  STATUS:0,312,0,2,0,2
+  
+### DEBUG
+
+Toggle debug mode
+
+Example:
+
+  DEBUG
+
+Response:
+
+  DEBUG_OK  

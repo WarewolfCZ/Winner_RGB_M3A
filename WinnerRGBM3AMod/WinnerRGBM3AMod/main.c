@@ -7,13 +7,12 @@
 
 #define VERSION "1.0.0"
 
-#define DEBUG_ENABLED 1
-
 #define F_CPU 8000000UL // 8 MHz
 #define BAUD 19200       // define speed
 #define BAUDRATE ((F_CPU)/(BAUD*16UL)-1) // set baud rate value for UBRR
 #define DEFAULT_LED_TIMER_THRESHOLD 40
 #define EEPROM_SETTINGS_ADDRESS 0x00
+#define EEPROM_SETTINGS_DEBUG 0x04
 #define ANALOG_INPUTS_COUNT 6
 #define OUTPUTS_COUNT 4
 #define INPUT_COLD 0
@@ -58,26 +57,27 @@
 #define BRIGHTNESS_LOWER COLD_BRIGHTNESS_LOWER || WARM_BRIGHTNESS_LOWER
 #define BRIGHTNESS_HIGHER COLD_BRIGHTNESS_HIGHER || WARM_BRIGHTNESS_HIGHER
 
-#define TOUCH_DELAY 110
+#define TOUCH_DELAY 150
 
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdlib.h>
-#include <stdio.h>
+//#include <stdio.h>
 #include <string.h>
-#include <util/delay.h>
 #include <avr/wdt.h>
-#include <avr/interrupt.h>
-#include <stdbool.h>
 #include <avr/eeprom.h>
+#include <avr/pgmspace.h>
 
-uint16_t settings, pin;
+uint16_t settings;
+uint8_t pin[4];
+uint8_t debugMode;
 uint8_t selectedInput = 0;
 uint16_t analogInputs[ANALOG_INPUTS_COUNT];
 uint8_t inputs[ANALOG_INPUTS_COUNT];
 uint8_t bufferIndex = 0;
-uint8_t bufferLimit = 50;
-char *uartBuffer;
+uint8_t bufferLimit = 9;
+char uartBuffer[10];
+
 
 // function to initialize UART
 void uart_init (void) {
@@ -89,9 +89,6 @@ void uart_init (void) {
 	DDRD |= 1 << PIND1;//pin1 of portD as OUTPUT
 	DDRD &= ~(1 << PIND0);//pin0 of portD as INPUT
 	PORTD |= 1 << PIND0; // turn on the pull-up
-
-    uartBuffer = malloc(bufferLimit * sizeof(char) + 1);
-    memset(uartBuffer, 0, sizeof(uartBuffer[0])*bufferLimit); // clear buffer
 }
 
 // function to send data
@@ -113,6 +110,17 @@ void uart_str_transmit(char* str) {
 		uart_transmit(str[i]);
 		i++;
 	}
+}
+
+/************************************************************************/
+/* Send string from program memory                                      */
+/************************************************************************/
+void uart_prg_str_transmit(const char str[]) {
+
+    uint8_t c;
+    while (0 != (c = pgm_read_byte(str++))) {
+        uart_transmit(c);
+    }
 }
 
 char* flushBuffer() {
@@ -146,7 +154,7 @@ void wdt_init(void) {
 }
 
 void soft_reset() {
-    if (DEBUG_ENABLED) uart_str_transmit("Soft reset\r\n");
+    if (debugMode) uart_prg_str_transmit(PSTR("Soft reset\r\n"));
     // enable watchdog and let it reset the controller
     wdt_enable(WDTO_15MS);
     for(;;){}
@@ -171,7 +179,7 @@ void output_init() {
 }
 
 void touchPower() {
-    if (DEBUG_ENABLED) uart_str_transmit("power button touch\r\n");
+    if (debugMode) uart_prg_str_transmit(PSTR("power button touch\r\n"));
     PORTB |= (1 << PINB3);
     _delay_ms(200);
     PORTB &= ~(1 << PINB3);
@@ -179,7 +187,7 @@ void touchPower() {
 }
 
 void touchMode() {
-    if (DEBUG_ENABLED) uart_str_transmit("mode button touch\r\n");
+    if (debugMode) uart_prg_str_transmit(PSTR("mode button touch\r\n"));
     PORTB |= (1 << PINB2);
     _delay_ms(TOUCH_DELAY);
     PORTB &= ~(1 << PINB2);
@@ -187,7 +195,7 @@ void touchMode() {
 }
 
 void touchIncrease() {
-    if (DEBUG_ENABLED) uart_str_transmit("increase button touch\r\n");
+    if (debugMode) uart_prg_str_transmit(PSTR("increase button touch\r\n"));
     PORTB |= (1 << PINB1);
     _delay_ms(TOUCH_DELAY);
     PORTB &= ~(1 << PINB1);
@@ -195,40 +203,82 @@ void touchIncrease() {
 }
 
 void touchDecrease() {
-    if (DEBUG_ENABLED) uart_str_transmit("decrease button touch\r\n");
+    if (debugMode) uart_prg_str_transmit(PSTR("decrease button touch\r\n"));
     PORTB |= (1 << PINB0); // set PB0 to HIGH
     _delay_ms(TOUCH_DELAY);
     PORTB &= ~(1 << PINB0); // set PB0 to LOW
     _delay_ms(TOUCH_DELAY);
 }
 
-void validateSettings() {
+uint16_t validateSettings() {
     if (settings == 0xFFFF || SETTINGS_COLD > LEVEL_5 || SETTINGS_WARM > LEVEL_5 || 
     (SETTINGS_COLD != 0 && SETTINGS_WARM != 0 && SETTINGS_COLD != SETTINGS_WARM)) {
-        uart_str_transmit("Clearing invalid settings\r\n");
+        if (debugMode) uart_prg_str_transmit(PSTR("Clearing invalid settings\r\n"));
         settings = 0;
     }
+    return settings;
 }
 
 void updateSettings(uint16_t settings) {
     uint16_t oldValue = eeprom_read_word(EEPROM_SETTINGS_ADDRESS);
-    validateSettings();
+    settings = validateSettings();
     eeprom_update_word(EEPROM_SETTINGS_ADDRESS, settings);
     if (settings != oldValue) {
-        char msg[50];
-        if (DEBUG_ENABLED) sprintf(msg,"Settings written to EEPROM: 0x%04X\r\n", settings);
-        uart_str_transmit(msg);
+        if (debugMode) {
+            uart_prg_str_transmit(PSTR("Settings written to EEPROM: 0x0"));
+            uart_transmit(SETTINGS_COLD + '0');
+            uart_transmit('0');
+            uart_transmit(SETTINGS_WARM + '0');
+            uart_prg_str_transmit(PSTR("\r\n"));
+        }
     }
 }
 
 uint16_t readSettings() {
     settings = eeprom_read_word(EEPROM_SETTINGS_ADDRESS);
     if (settings == 0xFFFF || SETTINGS_COLD > LEVEL_5 || SETTINGS_WARM > LEVEL_5) {
-        uart_str_transmit("Initializing EEPROM\r\n");
+        uart_prg_str_transmit(PSTR("Initializing EEPROM\r\n"));
         settings = 0;
         updateSettings(settings);
     }
     return settings;
+}
+
+
+void sendLoadedSettings() {
+    uart_prg_str_transmit(PSTR("Settings loaded from EEPROM: 0x0"));
+    uart_transmit(SETTINGS_COLD + '0');
+    uart_transmit('0');
+    uart_transmit(SETTINGS_WARM + '0');
+    uart_prg_str_transmit(PSTR("\r\n"));
+}
+
+void updateDebugMode(uint8_t debugMode) {
+    if (debugMode > 0) debugMode = 1;
+    else debugMode = 0;
+    uint8_t oldValue = eeprom_read_byte(EEPROM_SETTINGS_DEBUG);
+    eeprom_update_byte(EEPROM_SETTINGS_DEBUG, debugMode);
+    if (debugMode != oldValue) {
+        uart_prg_str_transmit(PSTR("Debug mode written to EEPROM: 0x"));
+        uart_transmit(debugMode + '0');
+        uart_prg_str_transmit(PSTR("\r\n"));
+    }
+}
+
+uint16_t readDebugMode() {
+    debugMode = eeprom_read_byte(EEPROM_SETTINGS_DEBUG);
+    if (debugMode == 0xFF) {
+        uart_prg_str_transmit(PSTR("Initializing debugMode mode value\r\n"));
+        debugMode = 0;
+        updateDebugMode(debugMode);
+    }
+    return debugMode;
+}
+
+void sendLoadedDebugMode() {
+    uart_prg_str_transmit(PSTR("Debug mode loaded from EEPROM: 0x0"));
+    uart_transmit(debugMode + '0');
+    uart_prg_str_transmit(PSTR("\r\n"));
 }
 
 uint8_t getInputLevel(uint16_t input) {
@@ -264,53 +314,42 @@ void readInputs() {
 
 void sendStatus() {
     char msg[5];
-    uart_str_transmit("STATUS:");
+    uart_prg_str_transmit(PSTR("STATUS:"));
     itoa(analogInputs[0], msg, 10);
-    uart_transmit(*msg);
+    uart_str_transmit(msg);
     uart_transmit(',');
     itoa(analogInputs[1], msg, 10);
-    uart_transmit(*msg);
-    uart_transmit(',');
-    itoa(analogInputs[2], msg, 10);
-    uart_transmit(*msg);
-    uart_transmit(',');
-    itoa(analogInputs[3], msg, 10);
-    uart_transmit(*msg);
-    uart_transmit(',');
-    itoa(analogInputs[4], msg, 10);
-    uart_transmit(*msg);
-    uart_transmit(',');
-    itoa(analogInputs[5], msg, 10);
-    uart_transmit(*msg);
+    uart_str_transmit(msg);
     uart_transmit(',');
 
     itoa(inputs[INPUT_COLD], msg, 10);
-    uart_transmit(*msg);
+    uart_str_transmit(msg);
     uart_transmit(',');
     itoa(inputs[INPUT_WARM], msg, 10);
-    uart_transmit(*msg);
+    uart_str_transmit(msg);
     uart_transmit(',');
 
     itoa(SETTINGS_COLD, msg, 10);
-    uart_transmit(*msg);
+    uart_str_transmit(msg);
     uart_transmit(',');
     itoa(SETTINGS_WARM, msg, 10);
-    uart_transmit(*msg);
+    uart_str_transmit(msg);
 
-    uart_str_transmit("\r\n");
+    uart_prg_str_transmit(PSTR("\r\n"));
 
-    if (DEBUG_ENABLED) {
-        char msg3[120];
-        sprintf(msg3,"Buffer status: index: %d, limit: %d, buffer: %s\r\n", bufferIndex, bufferLimit, uartBuffer);
-        uart_str_transmit(msg3);
+    if (debugMode) {
+        uart_prg_str_transmit(PSTR("Buffer status: index: "));
+        itoa(bufferIndex, msg, 10);
+        uart_str_transmit(msg);
+        uart_prg_str_transmit(PSTR(", limit: "));
+        itoa(bufferLimit, msg, 10);
+        uart_str_transmit(msg);
+        uart_prg_str_transmit(PSTR(", buffer content: "));
+        uart_str_transmit(uartBuffer);
+        uart_prg_str_transmit(PSTR("\r\n"));
     }
 }
 
-void sendLoadedSettings() {
-    char msg[50];
-    sprintf(msg,"Settings loaded from EEPROM: 0x%04X\r\n", settings);
-    uart_str_transmit(msg);
-}
 
 void setup() {
 
@@ -319,8 +358,8 @@ void setup() {
     _delay_ms(500);
     validateSettings();
     while (POWER_DIFFERS) {
-        if (DEBUG_ENABLED) uart_str_transmit("Power status differs\r\n");
-        if (DEBUG_ENABLED) sendStatus();
+        if (debugMode) uart_prg_str_transmit(PSTR("Power status differs\r\n"));
+        if (debugMode) sendStatus();
         touchPower();
         readInputs();
         counter++;
@@ -329,8 +368,8 @@ void setup() {
     counter = 0;
     _delay_ms(50);
     while (MODE_DIFFERS) {
-        if (DEBUG_ENABLED) uart_str_transmit("Mode differs\r\n");
-        if (DEBUG_ENABLED) sendStatus();
+        if (debugMode) uart_prg_str_transmit(PSTR("Mode differs\r\n"));
+        if (debugMode) sendStatus();
         touchMode();
         readInputs();
         counter++;
@@ -339,12 +378,12 @@ void setup() {
     _delay_ms(50);
     counter = 0;
     while (BRIGHTNESS_DIFFERS) {
-        if (DEBUG_ENABLED) uart_str_transmit("Brightness differs\r\n");
-        if (DEBUG_ENABLED) sendStatus();
+        if (debugMode) uart_prg_str_transmit(PSTR("Brightness differs\r\n"));
+        if (debugMode) sendStatus();
         counter = 0;
         while (BRIGHTNESS_LOWER) {
             touchIncrease();
-            if (DEBUG_ENABLED) sendStatus();
+            if (debugMode) sendStatus();
             readInputs();
             counter++;
             if (counter > 10) soft_reset();
@@ -352,7 +391,7 @@ void setup() {
         counter = 0;
         while (BRIGHTNESS_HIGHER) {
             touchDecrease();
-            if (DEBUG_ENABLED) sendStatus();
+            if (debugMode) sendStatus();
             readInputs();
             counter++;
             if (counter > 10) soft_reset();
@@ -365,76 +404,91 @@ int main(void) {
 	wdt_init(); // disable watchdog
     output_init();
     adc_init();
-	//sei();    // turn on interrupts
 	uart_init();
 
-    uint32_t counter = 0;
+    uint16_t statusCounter = 0;
+    uint16_t settingsCounter = 0;
     ADCSRA |= (1 << ADSC);  // start ADC conversion
     readSettings();
-    uart_str_transmit("\r\n======= Winner RGB M3A Lamp mod v");
-    uart_str_transmit(VERSION);
-    uart_str_transmit(" by WarewolfCZ =======\n\r\n");
+    readDebugMode();
+    uart_prg_str_transmit(PSTR("======= Winner RGB M3A Lamp mod v"));
+    uart_prg_str_transmit(PSTR(VERSION));
+    uart_prg_str_transmit(PSTR(" by WarewolfCZ =======\r\n"));
+    uart_prg_str_transmit(PSTR("Supported commands:\r\n"));
+    uart_prg_str_transmit(PSTR("SETXY = set light levels, X = cold Y = warm, X and Y in interval <0,5>\r\n"));
+    uart_prg_str_transmit(PSTR("PINXXXX = set Bluetooth PIN\r\n"));
+    uart_prg_str_transmit(PSTR("STATUS = request status line\r\n"));
+    uart_prg_str_transmit(PSTR("DEBUG = toggle debug mode\r\n"));
+    uart_prg_str_transmit(PSTR("Commands are separated by new line\r\n\r\n"));
 
-    uart_str_transmit("Supported commands:\r\n");
-    uart_str_transmit("CMD:XY = set light levels, X = cold Y = warm, X and Y in interval <0,5>\r\n");
-    uart_str_transmit("PIN:1234 = set Bluetooth PIN\r\n");
-    uart_str_transmit("STATUS = request status line\r\n");
-    uart_str_transmit("Commands are separated by new line\r\n\r\n");
-
-    if (DEBUG_ENABLED) sendLoadedSettings();
+    if (debugMode) sendLoadedSettings();
+    if (debugMode) sendLoadedDebugMode();
     _delay_ms(50);
     setup();
-    uart_str_transmit("Setup complete\r\n");
+    uart_prg_str_transmit(PSTR("Setup complete\r\n"));
 
 	while (1) { 
-        //_delay_ms(1);
         if (UCSRA & (1<<RXC)) {
             char* data = uart_str_receive();
             if (data != NULL && data[0] != 0x00) {
-                if (DEBUG_ENABLED)  {
-                    uart_str_transmit("RECEIVED:");
+                if (debugMode)  {
+                    uart_prg_str_transmit(PSTR("RECEIVED:"));
                     uart_str_transmit(data);
-                    uart_str_transmit("\r\n");
+                    uart_prg_str_transmit(PSTR("\r\n"));
                 }
 
-                if (strncasecmp(data, "SET:", 4) == 0 && strlen(data) >= 6) {
-                    uint8_t cold = ((data[4] - '0') % (LEVEL_5 + 1));
-                    uint8_t warm = ((data[5] - '0') % (LEVEL_5 + 1));
+                if (strncasecmp(data, "SET", 3) == 0 && strlen(data) >= 5) {
+                    uint8_t cold = ((data[3] - '0') % (LEVEL_5 + 1));
+                    uint8_t warm = ((data[4] - '0') % (LEVEL_5 + 1));
                     if (cold != warm && cold != 0 && warm != 0) { // invalid combination, set both to same value
-                        uart_str_transmit("SET_INVALID:");
+                        uart_prg_str_transmit(PSTR("SET_INVALID:"));
                     } else {
                         settings = cold << 8 | warm;
-                        uart_str_transmit("SET_OK:");
+                        uart_prg_str_transmit(PSTR("SET_OK:"));
                     }
                     uart_transmit((unsigned char) cold + '0');
                     uart_transmit((unsigned char) warm + '0');
-                    uart_str_transmit("\r\n");
+                    uart_prg_str_transmit(PSTR("\r\n"));
+                    updateSettings(settings);
                     setup();
-                } else if (strncasecmp(data, "PIN:", 4) == 0 && strlen(data) >= 8) {
-                    pin = ((data[4] - '0') % 10) << 8 | ((data[5] - '0') % 10);
-                    uart_str_transmit("PIN_OK:");
-                    uart_transmit((unsigned char) (pin >> 8) + '0');
-                    uart_transmit((unsigned char) ((pin & 0xFF) + '0'));
-                    uart_str_transmit("\r\n");
+                } else if (strncasecmp(data, "PIN", 3) == 0 && strlen(data) >= 7) {
+                    pin[0] = ((data[3] - '0') % 10);
+                    pin[1] = ((data[4] - '0') % 10);
+                    pin[2] = ((data[5] - '0') % 10);
+                    pin[3] = ((data[6] - '0') % 10);
+                    uart_prg_str_transmit(PSTR("PIN_OK:"));
+                    uart_transmit((unsigned char) (pin[0] + '0'));
+                    uart_transmit((unsigned char) (pin[1] + '0'));
+                    uart_transmit((unsigned char) (pin[2] + '0'));
+                    uart_transmit((unsigned char) (pin[3] + '0'));
+                    uart_prg_str_transmit(PSTR("\r\n"));
                     setup();
-                } else if (strncasecmp(data, "STATUS", 6) == 0 && strlen(data) >= 6) {
-                     sendStatus();
+                } else if (strncasecmp(data, "STATUS", 6) == 0) {
+                    sendStatus();
+                } else if (strncasecmp(data, "DEBUG", 5) == 0) {
+                    if (debugMode > 0) debugMode = 0;
+                    else debugMode = 1;
+                    uart_prg_str_transmit(PSTR("DEBUG_OK\r\n"));
+                    updateDebugMode(debugMode);
                 } else {
-                    uart_str_transmit("CMD_INVALID\r\n");
+                    uart_prg_str_transmit(PSTR("CMD_INVALID\r\n"));
                 }
             }
         }
         readInputs();
-        counter++;
-        counter = counter % 25000;
+        statusCounter++;
+        statusCounter = statusCounter % 9000;
+        settingsCounter++;
+        settingsCounter = settingsCounter % 1000;
         
         if (MODE_DIFFERS || BRIGHTNESS_DIFFERS) {    
             settings = (((uint16_t) inputs[INPUT_COLD]) << 8) | inputs[INPUT_WARM];
-            updateSettings(settings);
         }
         
-        if (counter == 0) {
-            if (DEBUG_ENABLED) sendStatus();
+        if (debugMode && statusCounter == 0) {
+            sendStatus();
+        }
+        if (settingsCounter == 0) {
             updateSettings(settings);
         }
 	}
